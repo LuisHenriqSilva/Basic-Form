@@ -1,47 +1,88 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { Button, TextField, Switch, FormControlLabel } from "@material-ui/core";
 
-const RegisterForm = () => {
-  let nome = "";
+function RegisterForm({ formData, cpfValidation }) {
+  const [name, setName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [promotions, setPromotions] = useState(true);
+  const [newsletter, setNewsletter] = useState(true);
+  const [err, setErr] = useState({ cpf: { valid: true, text: "" } });
+
   return (
     <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        console.log(nome);
+      onSubmit={(event) => {
+        event.preventDefault();
+        formData({ name, lastName, cpf, promotions, newsletter });
       }}
     >
       <TextField
-        onChange={(e) => {
-          nome = e.target.value;
+        valeu={name}
+        onChange={(event) => {
+          setName(event.target.value);
         }}
-        id="nome"
-        label="nome"
+        id="name"
+        label="Nome"
         variant="outlined"
         margin="normal"
         fullWidth
       />
       <TextField
-        id="sobrenome"
-        label="sobrenome"
+        valeu={lastName}
+        onChange={(e) => {
+          setLastName(e.target.value);
+        }}
+        id="lastName"
+        label="Sobrenome"
         variant="outlined"
         margin="normal"
         fullWidth
       />
       <TextField
+        valeu={cpf}
         id="CPF"
-        label="CPF"
-        variant="outlined"
-        margin="normal"
         fullWidth
+        label="CPF"
+        margin="normal"
+        variant="outlined"
+        onChange={(event) => {
+          setCpf(event.target.value);
+        }}
+        onBlur={() => {
+          const isValid = cpfValidation(cpf);
+          setErr({
+            cpf: isValid,
+          });
+        }}
+        error={!err.cpf.valid}
+        helperText={err.cpf.text}
       />
       <FormControlLabel
         label="Promoções"
-        control={<Switch name="promocoes" defaultChecked color="primary" />}
+        control={
+          <Switch
+            color="primary"
+            name="promotions"
+            checked={promotions}
+            onChange={(event) => {
+              setPromotions(event.target.checked);
+            }}
+          />
+        }
       />
       <FormControlLabel
-        label="Novidades"
-        control={<Switch name="novidades" defaultChecked color="primary" />}
+        label="newsletter"
+        control={
+          <Switch
+            color="primary"
+            name="newsletter"
+            checked={newsletter}
+            onChange={(event) => {
+              setNewsletter(event.target.checked);
+            }}
+          />
+        }
       />
 
       <Button type="submit" variant="contained" color="primary">
@@ -49,6 +90,6 @@ const RegisterForm = () => {
       </Button>
     </form>
   );
-};
+}
 
 export default RegisterForm;
